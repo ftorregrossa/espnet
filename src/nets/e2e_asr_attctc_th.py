@@ -428,7 +428,7 @@ class E2E(torch.nn.Module):
 # ------------- CTC Network --------------------------------------------------------------------------------------------
 class _ChainerLikeCTC(warp_ctc._CTC):
     @staticmethod
-    def forward(ctx, acts, labels, act_lens, label_lens):
+    def forward(ctx, acts, labels, act_lens, label_lens, blank=0):
         is_cuda = True if acts.is_cuda else False
         acts = acts.contiguous()
         loss_func = warp_ctc.gpu_ctc if is_cuda else warp_ctc.cpu_ctc
@@ -441,7 +441,8 @@ class _ChainerLikeCTC(warp_ctc._CTC):
                   label_lens,
                   act_lens,
                   minibatch_size,
-                  costs)
+                  costs,
+                  blank)
         # modified only here from original
         costs = torch.FloatTensor([costs.sum()]) / acts.size(1)
         ctx.grads = Variable(grads)
@@ -459,10 +460,11 @@ def chainer_like_ctc_loss(acts, labels, act_lens, label_lens):
     act_lens: Tensor of (batch) containing label length of each example
     """
     assert len(labels.size()) == 1  # labels must be 1 dimensional
-    from torch.nn.modules.loss import _assert_no_grad
-    _assert_no_grad(labels)
-    _assert_no_grad(act_lens)
-    _assert_no_grad(label_lens)
+    # No Longer useful with pytorch 0.4.1 (removed)
+    #from torch.nn.modules.loss import _assert_no_grad
+    #_assert_no_grad(labels)
+    #_assert_no_grad(act_lens)
+    #_assert_no_grad(label_lens)
     return _ChainerLikeCTC.apply(acts, labels, act_lens, label_lens)
 
 
