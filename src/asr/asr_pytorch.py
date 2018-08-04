@@ -26,6 +26,7 @@ import torch
 from asr_utils import adadelta_eps_decay
 from asr_utils import CompareValueTrigger
 from asr_utils import converter_kaldi
+from asr_utils import converter_tensor
 from asr_utils import delete_feat
 from asr_utils import load_labeldict
 from asr_utils import make_batchset
@@ -284,9 +285,14 @@ def train(args):
     valid_iter = chainer.iterators.SerialIterator(
         valid, 1, repeat=False, shuffle=False)
 
+    # converter choice
+    converter = converter_kaldi
+    if args.input_tensor:
+        converter = converter_tensor 
+
     # Set up a trainer
     updater = PytorchSeqUpdaterKaldi(
-        model, args.grad_clip, train_iter, optimizer, converter=converter_kaldi, device=gpu_id)
+        model, args.grad_clip, train_iter, optimizer, converter=converter, device=gpu_id)
     trainer = training.Trainer(
         updater, (args.epochs, 'epoch'), out=args.outdir)
 
@@ -301,13 +307,13 @@ def train(args):
 
     # Evaluate the model with the test dataset for each epoch
     trainer.extend(PytorchSeqEvaluaterKaldi(
-        model, valid_iter, reporter, converter=converter_kaldi, device=gpu_id))
+        model, valid_iter, reporter, converter=converter, device=gpu_id))
 
     # Save attention weight each epoch
     if args.num_save_attention > 0 and args.mtlalpha != 1.0:
         data = sorted(list(valid_json.items())[:args.num_save_attention],
                       key=lambda x: int(x[1]['input'][0]['shape'][1]), reverse=True)
-        data = converter_kaldi([data], device=gpu_id)
+        data = converter([data], device=gpu_id)
         trainer.extend(PlotAttentionReport(model, data, args.outdir + "/att_ws"), trigger=(1, 'epoch'))
 
     # Make a plot for training and validation values

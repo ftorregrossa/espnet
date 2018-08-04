@@ -54,6 +54,8 @@ def main():
                         help='Filename of train label data (json)')
     parser.add_argument('--valid-label', type=str, default=None,
                         help='Filename of validation label data (json)')
+    parser.add_argument('--input_tensor', action="store_true",
+                        help='Whether inputs are .t7 files')
     # network archtecture
     # encoder
     parser.add_argument('--etype', default='blstmp', type=str,

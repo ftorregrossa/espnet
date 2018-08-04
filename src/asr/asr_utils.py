@@ -14,6 +14,7 @@ from chainer.training import extension
 
 # io related
 import kaldi_io_py
+from torch.utils.serialization import load_lua
 
 # matplotlib related
 import matplotlib
@@ -60,6 +61,13 @@ def converter_kaldi(batch, device=None):
 
     return batch
 
+def converter_tensor(batch, device=None):
+    batch = batch[0]
+    for data in batch:
+        feat = load_lua(data[1]['input'][0]['feat'])
+        data[1]['feat'] = feat
+
+    return batch
 
 def delete_feat(batch):
     for data in batch:
