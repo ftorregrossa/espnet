@@ -38,6 +38,8 @@ from e2e_asr_attctc_th import torch_is_old
 
 # for kaldi io
 import kaldi_io_py
+# to laod tensor
+from torch.utils.serialization import load_lua
 
 # rnnlm
 import extlm_pytorch
