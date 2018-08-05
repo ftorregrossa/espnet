@@ -9,8 +9,8 @@ export DIRECTORY=`dirname ${line} | cut -c3-`
 export FILENAME=`basename ${line} .${pattern}`
 export ID=`echo ${DIRECTORY}/${FILENAME} | sed -r 's/[/]+/-/g'`
 
-if [ ${pattern} == "txt" ]; then
-    export CONTENT=`cat ${line} | grep Text | cut -c8-`
+if [ "${pattern}" = "txt" ]; then
+    export CONTENT="`cat ${line} | grep Text | cut -c8-`"
 else
     export CONTENT=${basepath}/${DIRECTORY}/${FILENAME}.${pattern}
 fi

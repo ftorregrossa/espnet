@@ -7,22 +7,24 @@ basepath=
 lang="en"
 all=data/all
 dev=0
-
-. utils/parse_options.sh
-
-echo "Start preprocessing"
 trans=data/tr
 dump=dump
 langdir=data/lang_1char
+
+. utils/parse_options.sh || exit 1;
+
+echo "Start preprocessing"
 
 mkdir -p ${dump}
 mkdir -p ${trans}
 mkdir -p ${all}
 mkdir -p ${langdir}
-
+echo ${dev}
+echo ${basepath}
 if [ ${dev} -eq 0 ]; then
         devpath=
 else
+	echo "DEV MODE"
         devpath=dev
         
         all=${all}/dev
@@ -40,8 +42,10 @@ fi
 
 echo "-- Making scp files"
 # make scps
-make_scp.sh --dev=${dev} --pattern=t7 --basepath=${basepath} --out=${all}/feats.scp $1
-make_scp.sh --dev=${dev} --pattern=txt --basepath=${basepath} --out=${trans}/text $2
+echo "-- > Making features scp files"
+./make_scp.sh --pattern t7 --basepath ${basepath} --out ${all}/feats.scp --dev ${dev} $1
+echo "-- > Making text scp files"
+./make_scp.sh --pattern txt --basepath ${basepath} --out ${trans}/text --dev ${dev} $2
 
 echo "Find tokens"
 dict=${langdir}/tr_units.txt
