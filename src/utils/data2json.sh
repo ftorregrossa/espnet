@@ -11,6 +11,7 @@ feat="" # feat.scp
 oov="<unk>"
 bpecode=""
 verbose=0
+tensor=0
 
 . utils/parse_options.sh
 
@@ -26,12 +27,16 @@ rm -f ${tmpdir}/*.scp
 
 # input, which is not necessary for decoding mode, and make it as an option
 if [ ! -z ${feat} ]; then
-    if [ ${verbose} -eq 0 ]; then
-        feat-to-len scp:${feat} ark,t:${tmpdir}/ilen.scp &> /dev/null
-        feat-to-dim scp:${feat} ark,t:${tmpdir}/idim.scp &> /dev/null
+    if [ ${tensor} -eq 0 ]; then
+        if [ ${verbose} -eq 0 ]; then
+            feat-to-len scp:${feat} ark,t:${tmpdir}/ilen.scp &> /dev/null
+            feat-to-dim scp:${feat} ark,t:${tmpdir}/idim.scp &> /dev/null
+        else
+            feat-to-len scp:${feat} ark,t:${tmpdir}/ilen.scp 
+            feat-to-dim scp:${feat} ark,t:${tmpdir}/idim.scp 
+        fi
     else
-        feat-to-len scp:${feat} ark,t:${tmpdir}/ilen.scp 
-        feat-to-dim scp:${feat} ark,t:${tmpdir}/idim.scp 
+        tensor2dim.py ${feat} ${tmpdir}/ilen.scp ${tmpdir}/idim.scp
     fi
 fi
 
