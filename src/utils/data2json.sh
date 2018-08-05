@@ -36,7 +36,8 @@ if [ ! -z ${feat} ]; then
             feat-to-dim scp:${feat} ark,t:${tmpdir}/idim.scp 
         fi
     else
-        tensor2dim.py ${feat} ${tmpdir}/ilen.scp ${tmpdir}/idim.scp
+        tensor2dim.py ${feat} "ilen" > ${tmpdir}/ilen.scp
+        tensor2dim.py ${feat} "idim" > ${tmpdir}/idim.scp
     fi
 fi
 
