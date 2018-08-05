@@ -39,6 +39,8 @@ def main():
                         help='Filename of recognition data (json)')
     parser.add_argument('--result-label', type=str, required=True,
                         help='Filename of result label data (json)')
+    parser.add_argument('--input_tensor', action="store_true",
+                        help='Whether inputs are .t7 files')
     # model (parameter) related
     parser.add_argument('--model', type=str, required=True,
                         help='Model file parameters to read')

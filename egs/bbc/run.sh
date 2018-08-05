@@ -136,7 +136,7 @@ decode_dir=decode_beam${beam_size}_e${recog_model}_p${penalty}_len${minlenratio}
 feat_recog_dir=${dumpdir}/delta${do_delta}
 
 # split data
-splitjson.py --parts ${nj} $1/data.json 
+splitjson.py --parts ${nj} $1/valid/data.json 
 
 #### use CPU for decoding
 ngpu=0
@@ -156,11 +156,11 @@ ${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
     --maxlenratio ${maxlenratio} \
     --minlenratio ${minlenratio} \
     --ctc-weight ${ctc_weight} \
+    --input_tensor
     &
-
+    wait
 
 score_sclite.sh --wer true ${expdir}/${decode_dir} ${dict}
 
 echo "Finished"
-
 

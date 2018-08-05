@@ -459,7 +459,10 @@ def recog(args):
 
     new_json = {}
     for name in recog_json.keys():
-        feat = kaldi_io_py.read_mat(recog_json[name]['input'][0]['feat'])
+        if args.input_tensor:
+            feat = load_lua(recog_json[name]['input'][0]['feat']).numpy()
+        else:
+            feat = kaldi_io_py.read_mat(recog_json[name]['input'][0]['feat'])
         nbest_hyps = e2e.recognize(feat, args, train_args.char_list, rnnlm=rnnlm)
         # get 1best and remove sos
         y_hat = nbest_hyps[0]['yseq'][1:]
