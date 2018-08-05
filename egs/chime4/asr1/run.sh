@@ -238,39 +238,34 @@ if [ ${stage} -le 4 ]; then
     echo "stage 4: Decoding"
     nj=32
 
-    for rtask in ${recog_set}; do
-    (
-        decode_dir=decode_${rtask}_beam${beam_size}_e${recog_model}_p${penalty}_len${minlenratio}-${maxlenratio}
-        feat_recog_dir=${dumpdir}/${rtask}/delta${do_delta}
+    decode_dir=decode_beam${beam_size}_e${recog_model}_p${penalty}_len${minlenratio}-${maxlenratio}
+    feat_recog_dir=${dumpdir}/${rtask}/delta${do_delta}
 
-        # split data
-        splitjson.py --parts ${nj} ${feat_recog_dir}/data.json 
+    # split data
+    splitjson.py --parts ${nj} $1/valid/data.json 
 
-        #### use CPU for decoding
-        ngpu=0
+    #### use CPU for decoding
+    ngpu=0
 
-        ${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
-            asr_recog.py \
-            --ngpu ${ngpu} \
-            --backend ${backend} \
-            --debugmode ${debugmode} \
-            --verbose ${verbose} \
-            --recog-json ${feat_recog_dir}/split${nj}utt/data.JOB.json \
-            --result-label ${expdir}/${decode_dir}/data.JOB.json \
-            --model ${expdir}/results/model.${recog_model}  \
-            --model-conf ${expdir}/results/model.conf  \
-            --beam-size ${beam_size} \
-            --penalty ${penalty} \
-            --maxlenratio ${maxlenratio} \
-            --minlenratio ${minlenratio} \
-            &
-        wait
-
-        score_sclite.sh --wer true --nlsyms ${nlsyms} ${expdir}/${decode_dir} ${dict}
-
-    ) &
-    done
+    ${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
+        asr_recog.py \
+        --ngpu ${ngpu} \
+        --backend ${backend} \
+        --debugmode ${debugmode} \
+        --verbose ${verbose} \
+        --recog-json ${feat_recog_dir}/split${nj}utt/data.JOB.json \
+        --result-label ${expdir}/${decode_dir}/data.JOB.json \
+        --model ${expdir}/results/model.${recog_model}  \
+        --model-conf ${expdir}/results/model.conf  \
+        --beam-size ${beam_size} \
+        --penalty ${penalty} \
+        --maxlenratio ${maxlenratio} \
+        --minlenratio ${minlenratio} \
+        &
     wait
+
+    score_sclite.sh --wer true --nlsyms ${nlsyms} ${expdir}/${decode_dir} ${dict}
+
     echo "Finished"
 fi
 
