@@ -13,8 +13,8 @@ mkdir -p data/tr
 
 echo "-- Making scp files"
 # make scps
-make_scp.sh $1 --pattern t7 --basepath=${basepath} --out=${all}/feats.scp
-make_scp.sh $2 --pattern txt --basepath=${basepath} --out=data/tr/text
+make_scp.sh $1 --pattern t7 --basepath ${basepath} --out ${all}/feats.scp
+make_scp.sh $2 --pattern txt --basepath ${basepath} --out data/tr/text
 
 echo "Find tokens"
 dict=data/lang_1char/tr_units.txt
