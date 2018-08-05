@@ -6,30 +6,55 @@
 basepath=
 lang="en"
 all=data/all
+dev=0
 
 . utils/parse_options.sh
 
 echo "Start preprocessing"
-mkdir -p dump
-mkdir -p data/tr
+trans=data/tr
+dump=dump
+langdir=data/lang_1char
+
+mkdir -p ${dump}
+mkdir -p ${trans}
+mkdir -p ${all}
+mkdir -p ${langdir}
+
+if [ ${dev} -eq 0 ]; then
+        devpath=
+else
+        devpath=dev
+        
+        all=${all}/dev
+        mkdir -p ${all}
+
+        trans=${trans}/dev
+        mkdir -p ${trans}
+
+        dump=${dump}/dev
+        mkdir -p ${dump}
+
+        lang=${langdir}/dev
+        mkdir -p ${langdir}
+fi
 
 echo "-- Making scp files"
 # make scps
-make_scp.sh --pattern=t7 --basepath=${basepath} --out=${all}/feats.scp $1
-make_scp.sh --pattern=txt --basepath=${basepath} --out=data/tr/text $2
+make_scp.sh --dev=${dev} --pattern=t7 --basepath=${basepath} --out=${all}/feats.scp $1
+make_scp.sh --dev=${dev} --pattern=txt --basepath=${basepath} --out=${trans}/text $2
 
 echo "Find tokens"
-dict=data/lang_1char/tr_units.txt
+dict=${langdir}/tr_units.txt
 echo "dictionary: ${dict}"
 
 ### Task dependent. You have to check non-linguistic symbols used in the corpus.
 echo "Dictionary and Json Data Preparation"
-mkdir -p data/lang_1char/
+
 echo "<unk> 1" > ${dict} # <unk> must be 1, 0 will be used for "blank" in CTC
-text2token.py -s 1 -n 1 data/tr/text | cut -f 2- -d" " | tr " " "\n" \
+text2token.py -s 1 -n 1 ${trans}/text | cut -f 2- -d" " | tr " " "\n" \
 | sort | uniq | grep -v -e '^\s*$' | awk '{print $0 " " NR+1}' >> ${dict}
 wc -l ${dict}
 
 # make json labels
 data2json.sh --lang ${lang} --feat ${all}/feats.scp \
-        data/tr ${dict} > ${all}/data.json
+        ${trans} ${dict} > ${all}/data.json
