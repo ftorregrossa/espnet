@@ -143,7 +143,7 @@ ${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
     --backend ${backend} \
     --debugmode ${debugmode} \
     --verbose ${verbose} \
-    --recog-json $1/split${nj}utt/data.JOB.json \
+    --recog-json $1/valid/split${nj}utt/data.JOB.json \
     --result-label ${expdir}/${decode_dir}/data.JOB.json \
     --model ${expdir}/results/model.${recog_model}  \
     --model-conf ${expdir}/results/model.conf  \
@@ -153,8 +153,6 @@ ${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
     --minlenratio ${minlenratio} \
     --ctc-weight ${ctc_weight} \
     --input_tensor
-    &
-    wait
 
 score_sclite.sh --wer true ${expdir}/${decode_dir} ${dict}
 
