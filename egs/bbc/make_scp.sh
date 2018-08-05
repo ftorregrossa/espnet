@@ -31,7 +31,7 @@ fi
 # fi
 
 if [ ${dev} -eq 0 ]; then 
-     find -L ${dir} -name *.${pattern} -exec sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext} ${propvalid} \;
+     find -L ${dir} -name *.${pattern} | xargs -P ${nproc} -I {} sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext} ${propvalid}
 else
      find -L ${dir} -name *.${pattern} | head -${dev} | xargs -P ${nproc} -I {} sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext} ${propvalid}
 fi
