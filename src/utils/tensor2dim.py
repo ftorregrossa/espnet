@@ -17,11 +17,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('input_feat', type=str, default=False, nargs='?',
                         help='as SCP file')
-    parser.add_argument('mode', type=str, default=False, nargs='?',
+    parser.add_argument('--mode', type=str, default=False, nargs='?',
                         help='ilen or idim')
     args = parser.parse_args()
 
-    scp_file = open(args.input_feat, "r")
+    if args.input_feat:
+        scp_file = open(args.input_feat, "r")
+    else:
+        scp_file = sys.stdin
     for line in scp_file:
         idx, in_file = line.split(" ")
         print(getShape(idx, in_file, args.mode))
