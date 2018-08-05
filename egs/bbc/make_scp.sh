@@ -6,7 +6,7 @@ out=dump/feats.scp
 . utils/parse_options.sh
 
 dir=$1
-
+echo $#
 if [ $# != 1 ]; then
     echo "Usage: $0 <dir>";
     exit 1;
