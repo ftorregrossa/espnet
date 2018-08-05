@@ -135,7 +135,7 @@ if [ ${stage} -le 4 ]; then
     feat_recog_dir=${dumpdir}/delta${do_delta}
 
     # split data
-    splitjson.py --parts ${nj} $1/data.json 
+    splitjson.py --parts ${nj} $1/valid/data.json 
 
     #### use CPU for decoding
     ngpu=0
