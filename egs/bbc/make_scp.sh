@@ -28,5 +28,5 @@ fi
 if [ ${dev} -eq 0 ]; then 
      find -L ${dir} -name *.${pattern} -exec sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext} \;
 else
-     find -L ${dir} -name *.${pattern} | head -10 | xargs -I {} sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext}
+     find -L ${dir} -name *.${pattern} | head -${dev} | xargs -I {} sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext}
 fi
