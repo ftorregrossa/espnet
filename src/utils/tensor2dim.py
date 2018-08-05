@@ -5,7 +5,8 @@ import re
 from torch.utils.serialization import load_lua
 
 def getShape(idx, in_file, mode):
-    tensor = load_lua(in_file)
+    return in_file
+    #tensor = load_lua(in_file)
     if mode == "ilen":
         return idx + " " + tensor.shape[0]
     elif mode == "idim":
