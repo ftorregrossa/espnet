@@ -61,12 +61,13 @@ if [ ! -z ${lang} ]; then
 fi
 # feats
 cat ${feat} > ${tmpdir}/feat.scp
-
+mkdir -p ${dir}/tmp
 rm -f ${tmpdir}/*.json
 for x in ${dir}/text ${dir}/utt2spk ${tmpdir}/*.scp; do
     k=`basename ${x} .scp`
     cat ${x} | scp2json.py --key ${k} > ${tmpdir}/${k}.json
 done
+cp -r ${tmpdir}/* ${dir}/tmp
 mergejson.py --verbose ${verbose} ${tmpdir}/*.json
 
 rm -fr ${tmpdir}
