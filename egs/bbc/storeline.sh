@@ -17,7 +17,7 @@ export ID=`echo ${TYPELOC}/${SUBJECT}/${FILENAME} | sed -r 's/[/]+/-/g'`
 if [ ${utt2spk} -eq 0 ]; then
     if [ "${pattern}" = "txt" ]; then
         export TXTFILE=${basepath}/${TYPELOC}/${SUBJECT}/${FILENAME}.${pattern}
-        export CONTENT="`cat ${TXTFILE} | grep Text | cut -c8-`"
+        export CONTENT="`grep Text < ${TXTFILE} | cut -c8-`"
     else
         export CONTENT=/${DIRECTORY}/${FILENAME}.${pattern}
     fi

@@ -10,7 +10,8 @@ dev=0
 trans=data/tr
 dump=dump
 langdir=data/lang_1char
-propvalid="0.8"
+propvalid=800
+nproc=1
 
 . utils/parse_options.sh || exit 1;
 
@@ -44,7 +45,7 @@ mkdir -p ${all}/valid
 mkdir -p ${trans}/train
 mkdir -p ${trans}/valid
 # make scps
-./make_scp.sh --propvalid ${propvalid} --pattern t7 --basetext $2 --outfeats ${all} --outtext ${trans} --dev ${dev} $1
+./make_scp.sh --propvalid ${propvalid} --pattern t7 --basetext $2 --outfeats ${all} --outtext ${trans} --dev ${dev} --nproc ${nproc} $1
 # echo "-- > Making text scp files"
 # ./make_scp.sh --pattern txt --basepath ${basepath} --out ${trans}/text --dev ${dev} $2
 # echo "-- > Making utt2spk scp files"

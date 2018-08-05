@@ -1,12 +1,13 @@
 #!/bin/bash
 
-propvalid="0.8"
+propvalid=800
 pattern=t7
 basetext=
 outfeats=dump
 outtext=
 dev=0
 utt2spk=0
+nproc=1
 
 . utils/parse_options.sh
 
@@ -32,5 +33,6 @@ fi
 if [ ${dev} -eq 0 ]; then 
      find -L ${dir} -name *.${pattern} -exec sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext} ${propvalid} \;
 else
-     find -L ${dir} -name *.${pattern} | head -10 | xargs -I {} sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext} ${propvalid}
+     find -L ${dir} -name *.${pattern} | head -${dev} | xargs -P ${nproc} -I {} sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext} ${propvalid}
 fi
+printf "SCP preprocessing terminated                                                                                                                   \r\n"
