@@ -86,15 +86,17 @@ set -o pipefail
 
 
 if [ -z ${tag} ]; then
-    expdir=exp/${train_set}_${etype}_e${elayers}_subsample${subsample}_unit${eunits}_proj${eprojs}_d${dlayers}_unit${dunits}_${atype}_aconvc${aconv_chans}_aconvf${aconv_filts}_mtlalpha${mtlalpha}_${opt}_bs${batchsize}_mli${maxlen_in}_mlo${maxlen_out}
+    expdir=exp/logs
     if ${do_delta}; then
         expdir=${expdir}_delta
     fi
 else
-    expdir=exp/${train_set}_${tag}
+    expdir=exp/logs
 fi
 mkdir -p ${expdir}
 
+dict=data/lang_1char/tr_units.txt
+echo "Using $backend"
 echo "Network Training"
 ${cuda_cmd} --gpu ${ngpu} ${expdir}/train.log \
     asr_train.py \
@@ -127,39 +129,38 @@ ${cuda_cmd} --gpu ${ngpu} ${expdir}/train.log \
     --epochs ${epochs} \
     --input_tensor
 
-if [ ${stage} -le 4 ]; then
-    echo "stage 4: Decoding"
-    nj=32
+echo "Decoding"
+nj=32
 
-    decode_dir=decode_beam${beam_size}_e${recog_model}_p${penalty}_len${minlenratio}-${maxlenratio}_ctcw${ctc_weight}
-    feat_recog_dir=${dumpdir}/delta${do_delta}
+decode_dir=decode_beam${beam_size}_e${recog_model}_p${penalty}_len${minlenratio}-${maxlenratio}_ctcw${ctc_weight}
+feat_recog_dir=${dumpdir}/delta${do_delta}
 
-    # split data
-    splitjson.py --parts ${nj} $1/data.json 
+# split data
+splitjson.py --parts ${nj} $1/data.json 
 
-    #### use CPU for decoding
-    ngpu=0
+#### use CPU for decoding
+ngpu=0
 
-    ${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
-        asr_recog.py \
-        --ngpu ${ngpu} \
-        --backend ${backend} \
-        --debugmode ${debugmode} \
-        --verbose ${verbose} \
-        --recog-json ${feat_recog_dir}/split${nj}utt/data.JOB.json \
-        --result-label ${expdir}/${decode_dir}/data.JOB.json \
-        --model ${expdir}/results/model.${recog_model}  \
-        --model-conf ${expdir}/results/model.conf  \
-        --beam-size ${beam_size} \
-        --penalty ${penalty} \
-        --maxlenratio ${maxlenratio} \
-        --minlenratio ${minlenratio} \
-        --ctc-weight ${ctc_weight} \
-        &
-    wait
+${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
+    asr_recog.py \
+    --ngpu ${ngpu} \
+    --backend ${backend} \
+    --debugmode ${debugmode} \
+    --verbose ${verbose} \
+    --recog-json ${feat_recog_dir}/split${nj}utt/data.JOB.json \
+    --result-label ${expdir}/${decode_dir}/data.JOB.json \
+    --model ${expdir}/results/model.${recog_model}  \
+    --model-conf ${expdir}/results/model.conf  \
+    --beam-size ${beam_size} \
+    --penalty ${penalty} \
+    --maxlenratio ${maxlenratio} \
+    --minlenratio ${minlenratio} \
+    --ctc-weight ${ctc_weight} \
+    &
 
-    score_sclite.sh --wer true ${expdir}/${decode_dir} ${dict}
 
-    echo "Finished"
-fi
+score_sclite.sh --wer true ${expdir}/${decode_dir} ${dict}
+
+echo "Finished"
+
 

@@ -65,7 +65,7 @@ def converter_tensor(batch, device=None):
     batch = batch[0]
     for data in batch:
         feat = load_lua(data[1]['input'][0]['feat'])
-        data[1]['feat'] = feat
+        data[1]['feat'] = feat.numpy()
 
     return batch
 
