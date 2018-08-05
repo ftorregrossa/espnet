@@ -137,9 +137,6 @@ decode_dir=decode_beam${beam_size}_e${recog_model}_p${penalty}_len${minlenratio}
 # split data
 splitjson.py --parts ${nj} $1/valid/data.json 
 
-#### use CPU for decoding
-ngpu=0
-
 ${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
     asr_recog.py \
     --ngpu ${ngpu} \
