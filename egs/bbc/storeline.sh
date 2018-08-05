@@ -12,7 +12,11 @@ export ID=`echo ${DIRECTORY}/${FILENAME} | sed -r 's/[/]+/-/g'`
 
 if [ ${utt2spk} -eq 0 ]; then
     if [ "${pattern}" = "txt" ]; then
-        export CONTENT="`cat ${line} | grep Text | cut -c8-`"
+        export SUBJECT=`basename ${DIRECTORY}`
+        export TYPELOC=`dirname ${DIRECTORY}`
+        export TYPELOC=`basename ${TYPELOC}`
+        export TXTFILE=${basepath}/${TYPELOC}/${SUBJECT}/${FILENAME}
+        export CONTENT="`cat ${TXTFILE} | grep Text | cut -c8-`"
     else
         export CONTENT=/${DIRECTORY}/${FILENAME}.${pattern}
     fi
