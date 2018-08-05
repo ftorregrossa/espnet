@@ -1,3 +1,4 @@
+#!/bin/bash
 
 pattern=t7
 basepath=
