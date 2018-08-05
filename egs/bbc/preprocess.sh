@@ -10,6 +10,7 @@ dev=0
 trans=data/tr
 dump=dump
 langdir=data/lang_1char
+propvalid="0.8"
 
 . utils/parse_options.sh || exit 1;
 
@@ -38,8 +39,12 @@ fi
 
 echo "Start preprocessing"
 echo "-- Making scp files"
+mkdir -p ${all}/train
+mkdir -p ${all}/valid
+mkdir -p ${trans}/train
+mkdir -p ${trans}/valid
 # make scps
-./make_scp.sh --pattern t7 --basetext $2 --outfeats ${all} --outtext ${trans} --dev ${dev} $1
+./make_scp.sh --propvalid ${propvalid} --pattern t7 --basetext $2 --outfeats ${all} --outtext ${trans} --dev ${dev} $1
 # echo "-- > Making text scp files"
 # ./make_scp.sh --pattern txt --basepath ${basepath} --out ${trans}/text --dev ${dev} $2
 # echo "-- > Making utt2spk scp files"
@@ -53,10 +58,14 @@ echo "dictionary: ${dict}"
 echo "Dictionary and Json Data Preparation"
 
 echo "<unk> 1" > ${dict} # <unk> must be 1, 0 will be used for "blank" in CTC
-text2token.py -s 1 -n 1 ${trans}/text | cut -f 2- -d" " | tr " " "\n" \
+cat ${trans}/train/text ${trans}/valid/text | text2token.py -s 1 -n 1 | cut -f 2- -d" " | tr " " "\n" \
 | sort | uniq | grep -v -e '^\s*$' | awk '{print $0 " " NR+1}' >> ${dict}
 wc -l ${dict}
 
 # make json labels
-data2json.sh --lang ${lang} --feat ${all}/feats.scp --tensor 1\
-        ${trans} ${dict} > ${all}/data.json
+echo "Making JSON file (training)"
+data2json.sh --lang ${lang} --feat ${all}/train/feats.scp --tensor 1\
+        ${trans}/train ${dict} > ${all}/train/data.json
+echo "Making JSON file (validation)"
+data2json.sh --lang ${lang} --feat ${all}/valid/feats.scp --tensor 1\
+        ${trans}/valid ${dict} > ${all}/valid/data.json

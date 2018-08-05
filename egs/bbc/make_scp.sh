@@ -1,5 +1,6 @@
 #!/bin/bash
 
+propvalid="0.8"
 pattern=t7
 basetext=
 outfeats=dump
@@ -10,9 +11,12 @@ utt2spk=0
 . utils/parse_options.sh
 
 dir=$1
-rm -f ${outfeats}/feats.scp
-rm -f ${outtext}/text
-rm -f ${outtext}/utt2spk
+rm -f ${outfeats}/train/feats.scp
+rm -f ${outfeats}/valid/feats.scp
+rm -f ${outtext}/train/text
+rm -f ${outtext}/valid/text
+rm -f ${outtext}/train/utt2spk
+rm -f ${outtext}/valid/utt2spk
 echo "-- >> in " $1
 if [ $# != 1 ]; then
     echo "Usage: $0 <dir>";
@@ -26,7 +30,7 @@ fi
 # fi
 
 if [ ${dev} -eq 0 ]; then 
-     find -L ${dir} -name *.${pattern} -exec sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext} \;
+     find -L ${dir} -name *.${pattern} -exec sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext} ${propvalid} \;
 else
-     find -L ${dir} -name *.${pattern} | head -10 | xargs -I {} sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext}
+     find -L ${dir} -name *.${pattern} | head -10 | xargs -I {} sh store_ft_tx_ut.sh {} ${basefeats} ${basetext} ${outfeats} ${outtext} ${propvalid}
 fi
