@@ -133,7 +133,6 @@ echo "Decoding"
 nj=32
 
 decode_dir=decode_beam${beam_size}_e${recog_model}_p${penalty}_len${minlenratio}-${maxlenratio}_ctcw${ctc_weight}
-feat_recog_dir=${dumpdir}/delta${do_delta}
 
 # split data
 splitjson.py --parts ${nj} $1/valid/data.json 
@@ -147,7 +146,7 @@ ${decode_cmd} JOB=1:${nj} ${expdir}/${decode_dir}/log/decode.JOB.log \
     --backend ${backend} \
     --debugmode ${debugmode} \
     --verbose ${verbose} \
-    --recog-json ${feat_recog_dir}/split${nj}utt/data.JOB.json \
+    --recog-json $1/split${nj}utt/data.JOB.json \
     --result-label ${expdir}/${decode_dir}/data.JOB.json \
     --model ${expdir}/results/model.${recog_model}  \
     --model-conf ${expdir}/results/model.conf  \
