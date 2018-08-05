@@ -24,7 +24,6 @@ dir=$1
 dic=$2
 tmpdir=`mktemp -d ${dir}/tmp-XXXXX`
 rm -f ${tmpdir}/*.scp
-
 # input, which is not necessary for decoding mode, and make it as an option
 if [ ! -z ${feat} ]; then
     if [ ${tensor} -eq 0 ]; then
@@ -36,8 +35,7 @@ if [ ! -z ${feat} ]; then
             feat-to-dim scp:${feat} ark,t:${tmpdir}/idim.scp 
         fi
     else
-        echo ${feat} | tensor2dim.py --mode "ilen" > ${tmpdir}/ilen.scp
-        echo ${feat} | tensor2dim.py --mode "idim" > ${tmpdir}/idim.scp
+        tensor2dim.py ${feat} ${tmpdir}/ilen.scp ${tmpdir}/idim.scp
     fi
 fi
 

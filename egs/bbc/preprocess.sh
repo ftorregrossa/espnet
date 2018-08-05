@@ -13,18 +13,14 @@ langdir=data/lang_1char
 
 . utils/parse_options.sh || exit 1;
 
-echo "Start preprocessing"
-
 mkdir -p ${dump}
 mkdir -p ${trans}
 mkdir -p ${all}
 mkdir -p ${langdir}
-echo ${dev}
-echo ${basepath}
 if [ ${dev} -eq 0 ]; then
         devpath=
 else
-	echo "DEV MODE"
+	echo "<<-- DEV MODE -->>"
         devpath=dev
         
         all=${all}/dev
@@ -40,6 +36,7 @@ else
         mkdir -p ${langdir}
 fi
 
+echo "Start preprocessing"
 echo "-- Making scp files"
 # make scps
 ./make_scp.sh --pattern t7 --basetext $2 --outfeats ${all} --outtext ${trans} --dev ${dev} $1
@@ -61,5 +58,5 @@ text2token.py -s 1 -n 1 ${trans}/text | cut -f 2- -d" " | tr " " "\n" \
 wc -l ${dict}
 
 # make json labels
-data2json.sh --lang ${lang} --feat ${all}/feats.scp --verbose 1\
+data2json.sh --lang ${lang} --feat ${all}/feats.scp --tensor 1\
         ${trans} ${dict} > ${all}/data.json
