@@ -1,3 +1,5 @@
+#!/bin/bash
+
 line=$1
 pattern=$2
 basepath=$3
