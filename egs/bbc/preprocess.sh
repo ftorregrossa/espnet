@@ -46,6 +46,8 @@ echo "-- > Making features scp files"
 ./make_scp.sh --pattern t7 --basepath ${basepath} --out ${all}/feats.scp --dev ${dev} $1
 echo "-- > Making text scp files"
 ./make_scp.sh --pattern txt --basepath ${basepath} --out ${trans}/text --dev ${dev} $2
+echo "-- > Making utt2spk scp files"
+./make_scp.sh --pattern txt --basepath ${basepath} --out ${trans}/utt2spk --dev ${dev} --utt2spk 1 $2
 
 echo "Find tokens"
 dict=${langdir}/tr_units.txt

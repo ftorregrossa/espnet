@@ -4,6 +4,7 @@ pattern=t7
 basepath=
 out=dump/feats.scp
 dev=0
+utt2spk=0
 
 . utils/parse_options.sh
 
@@ -16,7 +17,7 @@ if [ $# != 1 ]; then
 fi
 
 if [ ${dev} -eq 0 ]; then
-    find -L ${dir} -name *.${pattern} -exec sh storeline.sh {} ${pattern} ${basepath} ${out} \;
+    find -L ${dir} -name *.${pattern} -exec sh storeline.sh {} ${pattern} ${basepath} ${out} ${utt2spk} \;
 else
-    find -L ${dir} -name *.${pattern} | head -10 | xargs -I {} sh storeline.sh {} ${pattern} ${basepath} ${out} 
+    find -L ${dir} -name *.${pattern} | head -10 | xargs -I {} sh storeline.sh {} ${pattern} ${basepath} ${out} ${utt2spk}
 fi
