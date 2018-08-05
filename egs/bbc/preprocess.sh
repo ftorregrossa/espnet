@@ -61,5 +61,5 @@ text2token.py -s 1 -n 1 ${trans}/text | cut -f 2- -d" " | tr " " "\n" \
 wc -l ${dict}
 
 # make json labels
-data2json.sh --lang ${lang} --feat ${all}/feats.scp \
+data2json.sh --lang ${lang} --feat ${all}/feats.scp --verbose 1\
         ${trans} ${dict} > ${all}/data.json
